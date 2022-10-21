@@ -1,22 +1,16 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace RineaR.BeatABit.Core.BadgeEffects
 {
-    public class BoostEffect : IBadgeEffect
+    [RequireComponent(typeof(AthleticSystem))]
+    public class BoostEffect : MonoBehaviour
     {
-        public BoostEffect(Transform target)
-        {
-            Target = target;
-        }
+        private AthleticSystem _system;
 
-        public Transform Target { get; }
-
-        public void EnableEffect()
+        private void Awake()
         {
-        }
-
-        public void DisableEffect()
-        {
+            _system = GetComponent<AthleticSystem>() ?? throw new NullReferenceException();
         }
     }
 }

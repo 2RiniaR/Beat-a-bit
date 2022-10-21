@@ -23,7 +23,7 @@ namespace RineaR.BeatABit.Environments
             {
                 using var streamReader = new StreamReader(SourceFileFullPath);
                 var raw = await streamReader.ReadToEndAsync().ConfigureAwait(true);
-                if (token.IsCancellationRequested) return;
+                token.ThrowIfCancellationRequested();
                 JsonUtility.FromJsonOverwrite(raw, data);
             }
 
@@ -38,8 +38,9 @@ namespace RineaR.BeatABit.Environments
             data.recordTable = ApplicationSession.Current.recordTable;
 
             await using var streamWriter = new StreamWriter(SourceFileFullPath);
+            token.ThrowIfCancellationRequested();
             await streamWriter.WriteAsync(JsonUtility.ToJson(data));
-            if (token.IsCancellationRequested) return;
+            token.ThrowIfCancellationRequested();
             await streamWriter.FlushAsync();
 
             Destroy(data);

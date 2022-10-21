@@ -54,7 +54,6 @@ namespace RineaR.BeatABit.Environments
             CancellationToken token)
         {
             if (view && !view.gameObject.activeInHierarchy) view = Instantiate(view);
-
             var nextSession = CreateSession(next);
             var updatingProgressTask = Observable.EveryUpdate().Subscribe(_ =>
             {
@@ -62,20 +61,11 @@ namespace RineaR.BeatABit.Environments
             }).AddTo(token);
 
             Application.backgroundLoadingPriority = ThreadPriority.High;
-
             await (nextSession.LoadAsync(token), view ? view.OpenAsync(token) : UniTask.CompletedTask);
-            if (token.IsCancellationRequested) return;
-
             await nextSession.ActivateSceneAsync(token);
-            if (token.IsCancellationRequested) return;
             Application.backgroundLoadingPriority = ThreadPriority.Low;
-
             await updatingProgressTask.DisposeAsync();
-            if (token.IsCancellationRequested) return;
-
             await (UnloadSceneAsync(previous, token), view ? view.CloseAsync(token) : UniTask.CompletedTask);
-            if (token.IsCancellationRequested) return;
-
             if (view) Destroy(view.gameObject);
         }
 
@@ -106,7 +96,6 @@ namespace RineaR.BeatABit.Environments
             {
                 var session = GetSession(sceneType);
                 await session.UnloadAsync(CancellationToken.None);
-                if (token.IsCancellationRequested) return;
                 RemoveSession(sceneType);
             }
             else

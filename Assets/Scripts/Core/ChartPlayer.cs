@@ -1,6 +1,8 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using JetBrains.Annotations;
+using RineaR.BeatABit.Core.BadgeEffects;
 using UniRx;
 using UnityEngine;
 
@@ -9,28 +11,22 @@ namespace RineaR.BeatABit.Core
     public class ChartPlayer : MonoBehaviour
     {
         [Header("References")]
+        public AthleticSystem system;
+
         public Metronome metronome;
 
         public Chart playing;
         public ChartArrange arrange;
-        public Transform effectTarget;
 
         [Header("States")]
         public int beat;
 
-        private CancellationTokenSource _cancellationTokenSource;
+        public Component currentEffect;
 
         private void OnEnable()
         {
             metronome.enabled = true;
-            _cancellationTokenSource = new CancellationTokenSource();
-            _cancellationTokenSource.RegisterRaiseCancelOnDestroy(this);
-            LoopAsync(_cancellationTokenSource.Token).Forget();
-        }
-
-        private void OnDisable()
-        {
-            _cancellationTokenSource.Cancel();
+            LoopAsync(this.GetCancellationTokenOnDestroy()).Forget(e => { });
         }
 
         private async UniTask LoopAsync(CancellationToken token)
@@ -40,23 +36,29 @@ namespace RineaR.BeatABit.Core
             while (true)
             {
                 await metronome.OnBeatAsObservable().First().ToUniTask(cancellationToken: token);
-                if (token.IsCancellationRequested) return;
-
+                if (!isActiveAndEnabled) return;
                 beat++;
-                UpdateEffect(arrange.BitOf(beat - 1), arrange.BitOf(beat));
+                UpdateEffect(arrange.BadgeOf(beat));
             }
         }
 
-        private void UpdateEffect([CanBeNull] Badge previous, [CanBeNull] Badge next)
+        private void UpdateEffect([CanBeNull] Badge next)
         {
-            if (!effectTarget) return;
-            if (previous) previous.DisableEffect();
-            if (next) next.EnableEffect(effectTarget);
-        }
+            if (!system) return;
+            if (currentEffect) Destroy(currentEffect);
 
-        public bool IsReady()
-        {
-            return metronome && playing && arrange != null;
+            if (!next) return;
+            currentEffect = system.gameObject.AddComponent(next.effectType switch
+            {
+                Badge.EffectType.Boost => typeof(BoostEffect),
+                Badge.EffectType.Fly => typeof(FlyEffect),
+                Badge.EffectType.Freeze => typeof(FreezeEffect),
+                Badge.EffectType.Light => typeof(LightEffect),
+                Badge.EffectType.Heavy => typeof(HeavyEffect),
+                Badge.EffectType.Hide => typeof(HideEffect),
+                Badge.EffectType.Stop => typeof(StopEffect),
+                _ => throw new ArgumentOutOfRangeException(),
+            });
         }
     }
 }

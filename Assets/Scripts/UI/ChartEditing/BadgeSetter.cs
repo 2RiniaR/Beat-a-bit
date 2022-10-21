@@ -4,19 +4,17 @@ using RineaR.BeatABit.Environments;
 using UniRx;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace RineaR.BeatABit.UI.ChartEditing
 {
-    public class BitSetter : MonoBehaviour, ISelectHandler
+    public class BadgeSetter : MonoBehaviour, ISelectHandler
     {
         [Header("References")]
         public List<Graphic> colorSyncGraphics;
 
         public Image iconImage;
 
-        [FormerlySerializedAs("bit")]
         [Header("Properties")]
         public Badge badge;
 
@@ -24,10 +22,14 @@ namespace RineaR.BeatABit.UI.ChartEditing
 
         private ChartEditor _chartEditor;
 
-        private void Start()
+        private void Awake()
         {
             _chartEditor = GetComponentInParent<ChartEditor>();
             _button = GetComponent<Button>();
+        }
+
+        private void Start()
+        {
             if (_button) _button.OnClickAsObservable().Subscribe(_ => Submit()).AddTo(this);
         }
 
@@ -59,7 +61,7 @@ namespace RineaR.BeatABit.UI.ChartEditing
 
         public void Submit()
         {
-            _chartEditor.SetBit(this);
+            _chartEditor.SetBadge(this);
         }
     }
 }

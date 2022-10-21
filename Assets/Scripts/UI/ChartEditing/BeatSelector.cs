@@ -39,11 +39,15 @@ namespace RineaR.BeatABit.UI.ChartEditing
         /// </summary>
         private ChartEditor _chartEditor;
 
-        private void Start()
+        private void Awake()
         {
             _chartEditor = GetComponentInParent<ChartEditor>();
             _animator = GetComponent<Animator>();
             _button = GetComponent<Button>();
+        }
+
+        private void Start()
+        {
             if (_button) _button.OnClickAsObservable().Subscribe(_ => Submit()).AddTo(this);
 
             isEditing.Subscribe(x =>
@@ -55,21 +59,21 @@ namespace RineaR.BeatABit.UI.ChartEditing
         private void Update()
         {
             var beat = _chartEditor.ChartEdit.Chart.BeatOf(beatNumber);
-            var bit = _chartEditor.ChartEdit.BitOf(beatNumber);
+            var badge = _chartEditor.ChartEdit.BadgeOf(beatNumber);
 
             gameObject.SetActive(beat != null);
 
-            if (beatNumberText) beatNumberText.text = beatNumber.ToString();
+            if (beatNumberText) beatNumberText.text = beatNumber.ToString("D2");
 
             if (_button) _button.interactable = beat != null && !beat.locked && !_chartEditor.selecting;
 
             if (iconImage)
             {
-                iconImage.enabled = bit;
-                iconImage.sprite = bit ? bit.icon : null;
+                iconImage.enabled = badge;
+                iconImage.sprite = badge ? badge.icon : null;
             }
 
-            var color = bit ? bit.color : Color.white;
+            var color = badge ? badge.color : Color.white;
             foreach (var graphic in colorSyncGraphics)
             {
                 graphic.color = color;
@@ -78,7 +82,7 @@ namespace RineaR.BeatABit.UI.ChartEditing
 
         public void OnSelect(BaseEventData eventData)
         {
-            _chartEditor.UpdateDescription(_chartEditor.ChartEdit.BitOf(beatNumber));
+            _chartEditor.UpdateDescription(_chartEditor.ChartEdit.BadgeOf(beatNumber));
         }
 
         public void Submit()

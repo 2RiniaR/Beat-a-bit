@@ -13,9 +13,13 @@ namespace RineaR.BeatABit.UI.StageSelecting
 
         private Button _button;
 
-        private void Start()
+        private void Awake()
         {
             _button = GetComponent<Button>();
+        }
+
+        private void Start()
+        {
             if (_button) _button.OnClickAsObservable().Subscribe(_ => Submit()).AddTo(this);
         }
 

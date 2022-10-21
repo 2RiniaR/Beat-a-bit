@@ -17,7 +17,7 @@ namespace RineaR.BeatABit.General
         public float closeDuration;
         public Animator animator;
 
-        private void Start()
+        private void Awake()
         {
             animator = GetComponent<Animator>();
             CommonLocator.Current.Transfer(gameObject);

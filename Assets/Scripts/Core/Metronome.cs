@@ -33,7 +33,6 @@ namespace RineaR.BeatABit.Core
         private readonly Subject<Unit> _onBeat = new();
         private readonly Subject<int> _onTick = new();
 
-        private CancellationTokenSource _cancellationTokenSource;
         private float Interval => 60 / bpm;
 
         private void Start()
@@ -44,14 +43,7 @@ namespace RineaR.BeatABit.Core
 
         private void OnEnable()
         {
-            _cancellationTokenSource = new CancellationTokenSource();
-            _cancellationTokenSource.RegisterRaiseCancelOnDestroy(this);
-            LoopAsync(_cancellationTokenSource.Token).Forget();
-        }
-
-        private void OnDisable()
-        {
-            _cancellationTokenSource.Cancel();
+            LoopAsync(this.GetCancellationTokenOnDestroy()).Forget(e => { });
         }
 
         /// <summary>
@@ -83,15 +75,14 @@ namespace RineaR.BeatABit.Core
         private async UniTask LoopAsync(CancellationToken token)
         {
             await UniTask.Yield(token);
-            if (token.IsCancellationRequested) return;
+            if (!isActiveAndEnabled) return;
 
             for (var i = 0; i < preTickCount; i++)
             {
                 tickCount = i + 1;
                 _onTick.OnNext(tickCount);
-
                 await WaitForNextTick(token);
-                if (token.IsCancellationRequested) return;
+                if (!isActiveAndEnabled) return;
             }
 
             while (true)
@@ -102,9 +93,8 @@ namespace RineaR.BeatABit.Core
                 {
                     tickCount = i + 1;
                     _onTick.OnNext(i + 1);
-
                     await WaitForNextTick(token);
-                    if (token.IsCancellationRequested) return;
+                    if (!isActiveAndEnabled) return;
                 }
             }
         }
@@ -117,7 +107,7 @@ namespace RineaR.BeatABit.Core
             while (true)
             {
                 await UniTask.Yield(PlayerLoopTiming.Update, token);
-                if (token.IsCancellationRequested) return;
+                if (!isActiveAndEnabled) return;
 
                 duration += Time.deltaTime;
                 tickProgress = Mathf.Clamp01(duration / Interval);

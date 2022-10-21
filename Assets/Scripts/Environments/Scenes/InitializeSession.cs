@@ -12,16 +12,9 @@ namespace RineaR.BeatABit.Environments.Scenes
         public async UniTask LoadAsync(CancellationToken token)
         {
             await CacheRepository.Current.Load(token);
-            if (token.IsCancellationRequested) return;
-
             await SaveRepository.Current.Load(token);
-            if (token.IsCancellationRequested) return;
-
             await CacheRepository.Current.Save(token);
-            if (token.IsCancellationRequested) return;
-
             await SaveRepository.Current.Save(token);
-            if (token.IsCancellationRequested) return;
         }
 
         public UniTask UnloadAsync(CancellationToken token)

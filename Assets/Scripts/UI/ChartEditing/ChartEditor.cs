@@ -1,4 +1,5 @@
-﻿using RineaR.BeatABit.Core;
+﻿using System;
+using RineaR.BeatABit.Core;
 using RineaR.BeatABit.General;
 using TMPro;
 using UniRx;
@@ -17,9 +18,7 @@ namespace RineaR.BeatABit.UI.ChartEditing
         public Selectable focusOnSelectBeat;
         public Selectable focusOnEditBeat;
         public Button submitButton;
-        public SubWindowLayout bitSelectWindow;
-
-        public ChartPlayer output;
+        public SubWindowLayout badgeSelectWindow;
 
         [Header("State")]
         public BeatSelector selecting;
@@ -28,23 +27,30 @@ namespace RineaR.BeatABit.UI.ChartEditing
         public Chart chart;
 
         private MainControls _controls;
+
+        private Subject<ChartArrange> _onSubmitted;
         public ChartEdit ChartEdit { get; private set; }
 
         private void Awake()
         {
             _controls = new MainControls();
             _controls.ChartEdit.SetCallbacks(this);
+
+            _onSubmitted = new Subject<ChartArrange>();
+            _onSubmitted.AddTo(this);
         }
 
         private void Start()
         {
+            ChartEdit = new ChartEdit(chart);
+
             if (focusOnSelectBeat)
             {
                 EventSystem.current.firstSelectedGameObject = focusOnSelectBeat.gameObject;
                 EventSystem.current.SetSelectedGameObject(focusOnSelectBeat.gameObject);
             }
 
-            if (bitSelectWindow) bitSelectWindow.gameObject.SetActive(false);
+            if (badgeSelectWindow) badgeSelectWindow.gameObject.SetActive(false);
 
             if (submitButton) submitButton.OnClickAsObservable().Subscribe(_ => Submit()).AddTo(this);
         }
@@ -71,9 +77,9 @@ namespace RineaR.BeatABit.UI.ChartEditing
             Submit();
         }
 
-        public void Refresh()
+        public IObservable<ChartArrange> OnSubmittedAsObservable()
         {
-            ChartEdit = new ChartEdit(chart);
+            return _onSubmitted;
         }
 
         public void EditBeat(BeatSelector beatSelector)
@@ -82,25 +88,25 @@ namespace RineaR.BeatABit.UI.ChartEditing
 
             selecting = beatSelector;
             beatSelector.isEditing.Value = true;
-            if (bitSelectWindow)
+            if (badgeSelectWindow)
             {
-                bitSelectWindow.owner = beatSelector.GetComponent<RectTransform>();
-                bitSelectWindow.gameObject.SetActive(true);
+                badgeSelectWindow.owner = beatSelector.GetComponent<RectTransform>();
+                badgeSelectWindow.gameObject.SetActive(true);
             }
 
             EventSystem.current.SetSelectedGameObject(focusOnEditBeat.gameObject);
         }
 
-        public void SetBit(BitSetter bitSetter)
+        public void SetBadge(BadgeSetter badgeSetter)
         {
-            if (!selecting || !bitSetter) return;
+            if (!selecting || !badgeSetter) return;
 
-            ChartEdit.AssignBit(selecting.beatNumber, bitSetter.badge);
+            ChartEdit.Assign(selecting.beatNumber, badgeSetter.badge);
             EventSystem.current.SetSelectedGameObject(selecting.gameObject);
             selecting.isEditing.Value = false;
             selecting = null;
 
-            if (bitSelectWindow) bitSelectWindow.gameObject.SetActive(false);
+            if (badgeSelectWindow) badgeSelectWindow.gameObject.SetActive(false);
         }
 
         public void UpdateDescription(Badge badge)
@@ -118,9 +124,7 @@ namespace RineaR.BeatABit.UI.ChartEditing
 
         public void Submit()
         {
-            if (!output) return;
-            output.playing = chart;
-            output.arrange = ChartEdit.PublishArrange();
+            _onSubmitted.OnNext(ChartEdit.PublishArrange());
         }
     }
 }

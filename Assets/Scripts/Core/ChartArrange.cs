@@ -7,11 +7,11 @@ namespace RineaR.BeatABit.Core
     [Serializable]
     public class ChartArrange
     {
-        public List<Badge> bits;
+        public List<Badge> badges;
 
-        public Badge BitOf(int beatNumber)
+        public Badge BadgeOf(int beatNumber)
         {
-            return bits.TryAccess(beatNumber - 1);
+            return badges.TryAccess(beatNumber - 1);
         }
     }
 }

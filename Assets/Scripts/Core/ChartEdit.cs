@@ -6,7 +6,7 @@ namespace RineaR.BeatABit.Core
 {
     public class ChartEdit
     {
-        private List<Badge> _bits;
+        private List<Badge> _badges;
 
         public ChartEdit(Chart chart)
         {
@@ -18,29 +18,29 @@ namespace RineaR.BeatABit.Core
 
         public void ResetEditing()
         {
-            _bits = new List<Badge>();
+            _badges = new List<Badge>();
             foreach (var beat in Chart.beats)
             {
-                _bits.Add(beat.locked);
+                _badges.Add(beat.locked);
             }
         }
 
-        public void AssignBit(int beatNumber, [CanBeNull] Badge badge)
+        public void Assign(int beatNumber, [CanBeNull] Badge badge)
         {
             var beat = Chart.BeatOf(beatNumber);
             if (beat == null || beat.locked) return;
 
-            _bits[beatNumber - 1] = badge;
+            _badges[beatNumber - 1] = badge;
         }
 
-        public Badge BitOf(int beatNumber)
+        public Badge BadgeOf(int beatNumber)
         {
-            return _bits.TryAccess(beatNumber - 1);
+            return _badges.TryAccess(beatNumber - 1);
         }
 
         public ChartArrange PublishArrange()
         {
-            return new ChartArrange { bits = new List<Badge>(_bits) };
+            return new ChartArrange { badges = new List<Badge>(_badges) };
         }
     }
 }

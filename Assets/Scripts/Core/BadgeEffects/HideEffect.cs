@@ -1,33 +1,16 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace RineaR.BeatABit.Core.BadgeEffects
 {
-    public class HideEffect : IBadgeEffect
+    [RequireComponent(typeof(AthleticSystem))]
+    public class HideEffect : MonoBehaviour
     {
-        private bool _original;
-        private Player _player;
+        private AthleticSystem _system;
 
-        public HideEffect(Transform target)
+        private void Awake()
         {
-            Target = target;
-        }
-
-        public Transform Target { get; }
-
-        public void EnableEffect()
-        {
-            _player = Target.GetComponentInChildren<Player>();
-            if (_player == null) return;
-
-            _original = _player.hide;
-            _player.hide = true;
-        }
-
-        public void DisableEffect()
-        {
-            if (_player == null) return;
-
-            _player.hide = _original;
+            _system = GetComponent<AthleticSystem>() ?? throw new NullReferenceException();
         }
     }
 }

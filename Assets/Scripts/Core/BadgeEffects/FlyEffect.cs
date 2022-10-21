@@ -1,36 +1,35 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace RineaR.BeatABit.Core.BadgeEffects
 {
     /// <summary>
     ///     効果中、プレイヤーが空中ジャンプ可能になる。
     /// </summary>
-    public class FlyEffect : IBadgeEffect
+    [RequireComponent(typeof(AthleticSystem))]
+    public class FlyEffect : MonoBehaviour
     {
-        private bool _original;
-        private Player _player;
+        private bool _restore;
+        private AthleticSystem _system;
 
-        public FlyEffect(Transform target)
+        private void Awake()
         {
-            Target = target;
+            _system = GetComponent<AthleticSystem>() ?? throw new NullReferenceException();
         }
 
-        public Transform Target { get; }
-
-        public void EnableEffect()
+        private void Update()
         {
-            _player = Target.GetComponentInChildren<Player>();
-            if (_player == null) return;
-
-            _original = _player.fly;
-            _player.fly = true;
+            _system.bit.fly = true;
         }
 
-        public void DisableEffect()
+        private void OnEnable()
         {
-            if (_player == null) return;
+            _restore = _system.bit.fly;
+        }
 
-            _player.fly = _original;
+        private void OnDisable()
+        {
+            _system.bit.fly = _restore;
         }
     }
 }

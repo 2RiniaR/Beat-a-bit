@@ -9,7 +9,7 @@ namespace RineaR.BeatABit.General
     {
         private Selectable _selectable;
 
-        private void Start()
+        private void Awake()
         {
             _selectable = GetComponent<Selectable>();
         }

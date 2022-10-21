@@ -64,22 +64,15 @@ namespace RineaR.BeatABit.Environments
         public async UniTask UnloadAsync(CancellationToken token)
         {
             if (_loadingSceneHandle.IsValid())
-            {
                 await Addressables.UnloadSceneAsync(_loadingSceneHandle).ToUniTask(cancellationToken: token);
-                if (token.IsCancellationRequested) return;
-            }
             else
             {
                 var name = SceneNameProvider.GetName(SceneType);
                 await SceneManager.UnloadSceneAsync(name);
-                if (token.IsCancellationRequested) return;
+                token.ThrowIfCancellationRequested();
             }
 
-            if (LoadingSession != null)
-            {
-                await LoadingSession.UnloadAsync(token);
-                if (token.IsCancellationRequested) return;
-            }
+            if (LoadingSession != null) await LoadingSession.UnloadAsync(token);
         }
     }
 }
