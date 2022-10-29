@@ -2,7 +2,7 @@
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using RineaR.BeatABit.Core;
-using RineaR.BeatABit.General;
+using RineaR.BeatABit.Helpers;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;

@@ -1,8 +1,6 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using Cysharp.Threading.Tasks;
 using JetBrains.Annotations;
-using RineaR.BeatABit.Core.BadgeEffects;
 using UniRx;
 using UnityEngine;
 
@@ -48,17 +46,7 @@ namespace RineaR.BeatABit.Core
             if (currentEffect) Destroy(currentEffect);
 
             if (!next) return;
-            currentEffect = system.gameObject.AddComponent(next.effectType switch
-            {
-                Badge.EffectType.Boost => typeof(BoostEffect),
-                Badge.EffectType.Fly => typeof(FlyEffect),
-                Badge.EffectType.Freeze => typeof(FreezeEffect),
-                Badge.EffectType.Light => typeof(LightEffect),
-                Badge.EffectType.Heavy => typeof(HeavyEffect),
-                Badge.EffectType.Hide => typeof(HideEffect),
-                Badge.EffectType.Stop => typeof(StopEffect),
-                _ => throw new ArgumentOutOfRangeException(),
-            });
+            currentEffect = next.AddEffect(system);
         }
     }
 }

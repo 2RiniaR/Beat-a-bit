@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using RineaR.BeatABit.Stages.Badges;
+using UnityEngine;
 
 namespace RineaR.BeatABit.Core
 {
@@ -7,13 +9,23 @@ namespace RineaR.BeatABit.Core
     {
         public enum EffectType
         {
-            Boost,
-            Fly,
+            Dash,
+            Air,
             Freeze,
             Light,
             Heavy,
             Hide,
-            Stop,
+            Slow,
+            Pick,
+            Impact,
+            Remember,
+            Magnet,
+            Shield,
+            Grip,
+            Minimal,
+            Hold,
+            Cast,
+            Site,
         }
 
         public EffectType effectType;
@@ -21,5 +33,30 @@ namespace RineaR.BeatABit.Core
         public Sprite icon;
         public string description;
         public Flag unlockFlag;
+
+        public Component AddEffect(AthleticSystem system)
+        {
+            return system.gameObject.AddComponent(effectType switch
+            {
+                EffectType.Dash => typeof(DashEffect),
+                EffectType.Air => typeof(AirEffect),
+                EffectType.Freeze => typeof(FreezeEffect),
+                EffectType.Light => typeof(LightEffect),
+                EffectType.Heavy => typeof(HeavyEffect),
+                EffectType.Hide => typeof(HideEffect),
+                EffectType.Slow => typeof(SlowEffect),
+                EffectType.Pick => typeof(PickEffect),
+                EffectType.Impact => typeof(ImpactEffect),
+                EffectType.Remember => typeof(RememberEffect),
+                EffectType.Magnet => typeof(MagnetEffect),
+                EffectType.Shield => typeof(ShieldEffect),
+                EffectType.Grip => typeof(GripEffect),
+                EffectType.Minimal => typeof(MinimalEffect),
+                EffectType.Hold => typeof(HoldEffect),
+                EffectType.Cast => typeof(CastEffect),
+                EffectType.Site => typeof(SiteEffect),
+                _ => throw new ArgumentOutOfRangeException(),
+            });
+        }
     }
 }

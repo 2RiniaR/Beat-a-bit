@@ -8,14 +8,14 @@ namespace RineaR.BeatABit.General
     public class DestroyTimer : MonoBehaviour
     {
         [Header("Properties")]
-        public float start;
+        public float duration;
 
         [Header("States")]
         public float left;
 
-        private void Awake()
+        private void Start()
         {
-            left = start;
+            left = duration;
         }
 
         private void Update()

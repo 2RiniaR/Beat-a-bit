@@ -1,10 +1,11 @@
 ﻿using System;
+using RineaR.BeatABit.Core;
 using UnityEngine;
 
-namespace RineaR.BeatABit.Core.BadgeEffects
+namespace RineaR.BeatABit.Stages.Badges
 {
     [RequireComponent(typeof(AthleticSystem))]
-    public class HeavyEffect : MonoBehaviour
+    public class PickEffect : MonoBehaviour
     {
         private AthleticSystem _system;
 

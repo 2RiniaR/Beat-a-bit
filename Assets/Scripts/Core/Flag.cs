@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace RineaR.BeatABit.Core
 {
+    /// <summary>
+    ///     コンテンツを解禁するトリガーとなるフラグ。
+    /// </summary>
     [CreateAssetMenu(menuName = "Beat a Badge/Create Flag", fileName = "Flag", order = 0)]
     public class Flag : ScriptableObject
     {

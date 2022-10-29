@@ -5,7 +5,7 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using JetBrains.Annotations;
 using RineaR.BeatABit.Environments.Scenes;
-using RineaR.BeatABit.General;
+using RineaR.BeatABit.Helpers;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceProviders;

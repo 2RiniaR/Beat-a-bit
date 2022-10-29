@@ -2,6 +2,7 @@
 using System.Threading;
 using Cinemachine;
 using Cysharp.Threading.Tasks;
+using RineaR.BeatABit.Stages;
 using UniRx;
 using UnityEngine;
 
@@ -13,7 +14,7 @@ namespace RineaR.BeatABit.Core
         public Athletic athletic;
 
         [Tooltip("準備完了のために必須。nullの場合は、自動的に子から探して割り当てる。Prefabが渡されていた場合、Start()でInstantiateされる。")]
-        public Bit bit;
+        public Runner runner;
 
         [Tooltip("準備完了のために必須。nullの場合は、自動的に子から探して割り当てる。Prefabが渡されていた場合、Start()でInstantiateされる。")]
         public ChartPlayer chartPlayer;
@@ -36,7 +37,7 @@ namespace RineaR.BeatABit.Core
                 athletic = Instantiate(athletic, transform);
             if (!athletic) throw new InvalidOperationException("Athleticが存在しません！");
 
-            bit ??= GetComponentInChildren<Bit>();
+            runner ??= GetComponentInChildren<Runner>();
 
             chartPlayer ??= GetComponentInChildren<ChartPlayer>();
             if (chartPlayer && !chartPlayer.gameObject.activeInHierarchy)
@@ -51,19 +52,19 @@ namespace RineaR.BeatABit.Core
 
         private void Start()
         {
-            if (!bit) throw new InvalidOperationException("Bitが存在しません！");
+            if (!runner) throw new InvalidOperationException("Bitが存在しません！");
 
-            if (!bit.gameObject.activeInHierarchy)
+            if (!runner.gameObject.activeInHierarchy)
             {
                 if (!athletic.entrance)
                     throw new InvalidOperationException("Bitを生成しようとしましたが、Athletic.entranceが存在しません！");
-                bit = Instantiate(bit, athletic.entrance.position, Quaternion.identity, transform);
+                runner = Instantiate(runner, athletic.entrance.position, Quaternion.identity, transform);
             }
 
             chartPlayer.enabled = true;
             chartPlayer.system = this;
-            player.bitController.bit = bit;
-            if (virtualCamera) virtualCamera.Follow = bit.transform;
+            player.runnerController.runner = runner;
+            if (virtualCamera) virtualCamera.Follow = runner.transform;
 
             _onReady.OnNext(Unit.Default);
             _onReady.OnCompleted();
@@ -81,13 +82,17 @@ namespace RineaR.BeatABit.Core
 
         private async UniTask CountReadyAsync(CancellationToken token)
         {
-            bit.canMove = false;
-            player.bitController.enabled = false;
+            runner.canMove = false;
+            player.runnerController.enabled = false;
 
             await UniTask.WaitUntil(() => chartPlayer.beat >= 1, cancellationToken: token);
 
-            bit.canMove = true;
-            player.bitController.enabled = true;
+            runner.canMove = true;
+            player.runnerController.enabled = true;
+        }
+
+        public void Finish(AttemptResult result)
+        {
         }
     }
 }

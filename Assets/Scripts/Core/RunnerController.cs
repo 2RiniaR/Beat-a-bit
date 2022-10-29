@@ -1,34 +1,35 @@
-﻿using UniRx;
+﻿using RineaR.BeatABit.Stages;
+using UniRx;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace RineaR.BeatABit.Core
 {
-    public class BitController : MonoBehaviour, MainControls.IBitActions
+    public class RunnerController : MonoBehaviour, MainControls.IRunnerActions
     {
-        public Bit bit;
+        public Runner runner;
         private MainControls _controls;
 
         private void Awake()
         {
             _controls = new MainControls();
-            _controls.Bit.SetCallbacks(this);
+            _controls.Runner.SetCallbacks(this);
             _controls.AddTo(this);
         }
 
         private void FixedUpdate()
         {
-            if (bit) bit.Move(_controls.Bit.Move.ReadValue<Vector2>());
+            if (runner) runner.Move(_controls.Runner.Move.ReadValue<float>());
         }
 
         private void OnEnable()
         {
-            _controls.Bit.Enable();
+            _controls.Runner.Enable();
         }
 
         private void OnDisable()
         {
-            _controls.Bit.Disable();
+            _controls.Runner.Disable();
         }
 
         public void OnMove(InputAction.CallbackContext context)
@@ -38,19 +39,19 @@ namespace RineaR.BeatABit.Core
 
         public void OnJump(InputAction.CallbackContext context)
         {
-            if (!context.performed || !bit) return;
+            if (!context.performed || !runner) return;
 
-            if (context.ReadValueAsButton()) bit.TriggerJump();
-            else bit.FinishJump();
+            if (context.ReadValueAsButton()) runner.TriggerJump();
+            else runner.FinishJump();
         }
 
         public void OnAct(InputAction.CallbackContext context)
         {
-            if (!bit) return;
+            if (!runner) return;
 
-            if (context.performed) bit.StartAct();
+            if (context.performed) runner.StartAct();
 
-            if (context.canceled) bit.FinishAct();
+            if (context.canceled) runner.FinishAct();
         }
     }
 }

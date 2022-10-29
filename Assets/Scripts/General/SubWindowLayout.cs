@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using RineaR.BeatABit.Helpers;
+using UnityEngine;
 
 namespace RineaR.BeatABit.General
 {

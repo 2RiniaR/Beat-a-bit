@@ -6,7 +6,7 @@ using UnityEngine;
 namespace RineaR.BeatABit.UI.StagePlaying
 {
     [RequireComponent(typeof(Animator))]
-    public class BitView : MonoBehaviour
+    public class RunnerView : MonoBehaviour
     {
         public AthleticSystem system;
         public string lifeInteger = "Life";
@@ -30,7 +30,7 @@ namespace RineaR.BeatABit.UI.StagePlaying
 
         private void OnSystemReady()
         {
-            system.bit.ObserveEveryValueChanged(bit => bit.life).Subscribe(OnLifeChanged).AddTo(this);
+            system.runner.Life.OnChangedAsObservable().Subscribe(OnLifeChanged).AddTo(this);
         }
 
         private void OnLifeChanged(int life)

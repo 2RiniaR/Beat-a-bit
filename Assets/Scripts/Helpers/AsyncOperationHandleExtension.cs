@@ -1,6 +1,6 @@
 ﻿using UnityEngine.ResourceManagement.AsyncOperations;
 
-namespace RineaR.BeatABit.General
+namespace RineaR.BeatABit.Helpers
 {
     public static class AsyncOperationHandleExtension
     {

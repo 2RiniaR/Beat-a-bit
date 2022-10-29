@@ -7,6 +7,9 @@ using UnityEngine;
 
 namespace RineaR.BeatABit.Core
 {
+    /// <summary>
+    ///     メトロノーム。一定の拍と拍子でイベントを発行し続ける。
+    /// </summary>
     public class Metronome : MonoBehaviour
     {
         [Header("Properties")]
